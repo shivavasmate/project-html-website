@@ -1,0 +1,32 @@
+pipeline {
+    agent none
+    stages {
+        stage('Source') {
+            agent {
+                label "Node-1"
+            }
+            steps {
+                echo 'Hello World'
+          git (url:'https://github.com/shivavasmate/project-html-website.git', branch:"master")
+            }
+        }
+
+        stage('Build') {
+            agent {
+                label "Node-1"
+            }
+            steps {
+                sh 'sudo docker build /home/ubuntu/jenkins/workspace/SHIVAKUMAR/ -t cspipe1'
+            }
+        }
+        stage('Deploy') {
+            agent {
+                label "Node-1"
+            }
+            steps {
+                sh 'sudo docker rm -f $(sudo docker ps -aq)'
+                sh 'sudo docker run -itd -p 84:80 cspipe1'
+            }
+        }
+    }
+}
